@@ -73,9 +73,9 @@
     $('#article').empty();
   });
 
-  var startDate = $('#startyear').val();
-  var endDate = $('#endyear').val();
-  console.log(startDate);
+  var startDate = $('startyear').val();
+  var endyear = $('endyear').val();
+  console.log($('startyear').val());
 
 function formatDate(date) {
     var d = new Date(date),
@@ -91,29 +91,23 @@ function formatDate(date) {
 
 
   $("#searchBtn").on("click", function() {
-    console.log(startDate);
      var url = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
   url += '?' + $.param({
     'api-key': "04bf350edc93415da4bf9e19b64ff25a",
     'q': $('#searchTerm').val(),
+     });
+    if (startDate !== undefined) {
+        url += '?' + $.param({
     'begin_date': startDate + "0101",
     'end_date': endDate + "1231"
      });
-    
-    // if (startDate !== undefined) {
-    //     url += '?' + $.param({
-    // 'begin_date': startDate + "0101",
-    // 'end_date': endDate + "1231"
-    //  });
-    // }
-    
-    // if (endDate == undefined) {
-    //          url += '?' + $.param({
-    //         'end_date': formatDate(Date())
-    //           });
-    // }
-    
-
+        if (endDate == undefined) {
+             url += '?' + $.param({
+            'end_date': formatDate(Date())
+              });
+        }
+}
+ 
   $.ajax({
     url: url,
     method: 'GET',
