@@ -73,9 +73,8 @@
     $('#article').empty();
   });
 
-  var startDate = $('startyear').val();
-  var endyear = $('endyear').val();
-  console.log($('startyear').val());
+  // var startDate = $('#startyear').val();
+  // var endDate = $('#endyear').val();
 
 function formatDate(date) {
     var d = new Date(date),
@@ -92,39 +91,38 @@ function formatDate(date) {
 
   $("#searchBtn").on("click", function() {
      var url = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
-  url += '?' + $.param({
-    'api-key': "04bf350edc93415da4bf9e19b64ff25a",
-    'q': $('#searchTerm').val(),
-     });
-    if (startDate !== undefined) {
-        url += '?' + $.param({
-    'begin_date': startDate + "0101",
-    'end_date': endDate + "1231"
-     });
-        if (endDate == undefined) {
-             url += '?' + $.param({
-            'end_date': formatDate(Date())
-              });
+      url += '?' + $.param({
+        'api-key': "04bf350edc93415da4bf9e19b64ff25a",
+        'q': $('#searchTerm').val(),
+        'begin_date': $('#startyear').val() + "0101",
+        'end_date': $('#endyear').val() + "1231"
+         });
+
+        // if (startDate !== undefined) {
+        // 'begin_date': startDate + "0101",
+        // 'end_date': endDate + "1231"
+        // }
+        // if (endDate == undefined) {
+        //     'end_date': formatDate(Date())
+        // }
+     
+      $.ajax({
+        url: url,
+        method: 'GET',
+      }).done(function(result) {
+        for (var i = 0; i < $('#limit').val(); i++) {
+          console.log(result);
+
+          $("#article").append("<h4 class=''>"+result.response.docs[i].headline.main);
+          $("#article").append("<p class=''>"+result.response.docs[i].snippet);
+          $("#article").append("<p class=''>"+result.response.docs[i].pub_date);
+          $("#article").append("<a href='"+result.response.docs[i].web_url+"'>"+result.response.docs[i].web_url+"</a>");
         }
-}
- 
-  $.ajax({
-    url: url,
-    method: 'GET',
-  }).done(function(result) {
-    for (var i = 0; i < $('#limit').val(); i++) {
-      console.log(result);
+      }).fail(function(err) {
+        throw err;
+      });
 
-      $("#article").append("<h4 class=''>"+result.response.docs[i].headline.main);
-      $("#article").append("<p class=''>"+result.response.docs[i].snippet);
-      $("#article").append("<p class=''>"+result.response.docs[i].pub_date);
-      $("#article").append("<a href='"+result.response.docs[i].web_url+"'>"+result.response.docs[i].web_url+"</a>");
-    }
-  }).fail(function(err) {
-    throw err;
   });
-
-  })
 
   </script>
 
