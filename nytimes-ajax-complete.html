@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+</head>
+
+<body>
+    <h1 class="text-center">New York Times Search</h1>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
+    <!-- -->
+    <!-- -->
+    <div class="container">
+        <h3>Search Parameters</h3>
+        <form>
+
+
+            <div class="form-group">
+                <label for="exampleFormControlInput1">Search Term:</label>
+                <input type="text" class="form-control" id="searchTerm">
+            </div>
+
+
+            <div class="form-group">
+                <label for="exampleFormControlSelect1">Number of Records to Retrieve:</label>
+                <select class="form-control" id="limit">
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                    <option>5</option>
+                </select>
+            </div>
+
+<!--Search Start year -->
+            <div class="form-group">
+                <label for="exampleFormControlInput1">Start year (Optional):</label>
+                <input type="text" class="form-control" id="startyear">
+            </div>
+
+<!--Search End year  -->
+            <div class="form-group">
+                <label for="exampleFormControlInput1">End Year (Optional):</label>
+                <input type="text" class="form-control" id="endyear">
+            </div>
+
+<button type="button" class="btn btn-secondary btn-lg" id="searchBtn">Search</button>
+<button type="button" class="btn btn-secondary btn-lg" id="clearBtn">Clear Results</button>
+
+        </form>
+    </div>
+
+<br>
+<div class="container" id="results">
+<h3>Top Articles</h3>
+<br>
+    <div id="article" class="card"></div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script type="text/javascript">
+
+  $('#clearBtn').on("click",function() {
+    $('#article').empty();
+  });
+
+  var startDate = $('startyear').val();
+  var endyear = $('endyear').val();
+
+function formatDate(date) {
+    var d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [year, month, day].join('');
+}
+
+
+  $("#searchBtn").on("click", function() {
+     var url = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
+  url += '?' + $.param({
+    'api-key': "04bf350edc93415da4bf9e19b64ff25a",
+    'q': $('#searchTerm').val(),
+     });
+    if (startDate !== undefined) {
+        url += '?' + $.param({
+    'begin_date': startDate + "0101",
+    'end_date': endDate + "1231"
+     });
+        if (endDate == undefined) {
+             url += '?' + $.param({
+            'end_date': formatDate(Date())
+              });
+        }
+}
+ 
+  $.ajax({
+    url: url,
+    method: 'GET',
+  }).done(function(result) {
+    for (var i = 0; i < $('#limit').val(); i++) {
+      console.log(result);
+
+      $("#article").append("<h4 class=''>"+result.response.docs[i].headline.main);
+      $("#article").append("<p class=''>"+result.response.docs[i].snippet);
+      $("#article").append("<p class=''>"+result.response.docs[i].pub_date);
+      $("#article").append("<a href='"+result.response.docs[i].web_url+"'>"+result.response.docs[i].web_url+"</a>");
+    }
+  }).fail(function(err) {
+    throw err;
+  });
+
+  })
+
+  </script>
+
+
+
+</body>
+
+</html>
